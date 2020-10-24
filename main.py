@@ -4,7 +4,6 @@ Created on Thu Oct  8 21:56:21 2020
 
 @author: user
 """
-2020
 from datetime import datetime
 from phenology import Development 
 import datetime as dtime
@@ -19,8 +18,9 @@ startDate = datetime.strptime(date0str,"%Y-%m-%d")
 filename = 'out.csv'
 
 daycounter = 0
-ptdate =[]
-ptlv =[]
+pltdate =[]
+pltlv =[]
+pltstage = []
 
 #呼叫Development 物件
 maize = Development()
@@ -47,11 +47,15 @@ with open(filename, newline='') as csvfile:
       print(date, maize.stage[stg],"葉尖數=",leaftip)
       
       # making plot
-      ptdate.append(date)
-      ptlv.append(float(maize.leafAppeared))
+      pltdate.append(date)
+      pltlv.append(float(maize.leafAppeared))
+      pltstage.append(stg)
       daycounter += 1
 
+
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
-plt.scatter(ptdate,ptlv, marker='o')
+plt.xlabel('Date')
+plt.ylabel('Leaf tip')
+plt.scatter(pltdate,pltlv, c=pltstage)
 
       
