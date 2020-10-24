@@ -1,11 +1,5 @@
 # -*- coding: utf-8 -*-
 """
-Created on Sun Oct 18 22:50:25 2020
-
-@author: user
-"""
-# -*- coding: utf-8 -*-
-"""
 Created on Thu Oct  8 21:56:21 2020
 
 @author: user
@@ -48,13 +42,13 @@ with open(filename, newline='') as csvfile:
      
       maize.update(Temp)
       stg = maize.stg
-      leaftip = int(maize.leaftip)
+      leaftip = int(maize.leafAppeared)
      
       print(date, maize.stage[stg],"葉尖數=",leaftip)
       
       # making plot
       ptdate.append(date)
-      ptlv.append(float(maize.leaftip))
+      ptlv.append(float(maize.leafAppeared))
       daycounter += 1
 
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
