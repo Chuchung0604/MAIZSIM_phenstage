@@ -16,28 +16,27 @@ class Development:
     Rmax_LTAR = 0.53 #葉尖出現速率 leaftip/day
     Rmax_Germination = 0.45 #發芽速率
     Rmax_Emergence = 0.2388 # 出土速率
-    leaftip = 0
     LvsInitiated = 5 # directe use from MAIZSIM that 5 leaf initiated as emerged
-    leafAppeared = 0
-
-    T_ind = -99
-    juvLeafNo = 20 # Bright Jean
-    progressToTasselEmerg = 0
-    progressToAnthesis = 0
     PhyllochronsToTassel = 3
     PhyllochronsToSilk = 3
+
+    juvLeafNo = 20 # Bright Jean
     
-    # initiation the parameter
+    # initiation variable
     germinated=False # 0 as un-germinated, 1 as germinated
     emerged=False
     tassellinitiated = False
     silking = False
     tasselFull = False
+    leafAppeared = 0
     germinationRate = 0
     emergenceRate = 0
     LvsToInduce = 0
     inductions = 0
-    phyllochronesFromTI = 0
+    phyllochronesFromTI = 0    
+    T_ind = -99
+    progressToTasselEmerg = 0
+    progressToAnthesis = 0
     
     
     def beta_fn(self,t, Rmax, t_o, t_c):
