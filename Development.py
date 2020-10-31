@@ -7,7 +7,7 @@ Created on Sun Oct 18 22:16:45 2020
 
 class Development:
     stg = 0 # 生育期的代碼
-    stage = ["種子膨大","萌芽","出土","開花","吐絲"]
+    stage = ["播種","萌芽","出土","開花","吐絲"]
     dt = 1/24
     Tbase = 8
     Topt = 32.1
@@ -20,7 +20,7 @@ class Development:
     PhyllochronsToTassel = 3
     PhyllochronsToSilk = 3
 
-    juvLeafNo = 20 # Bright Jean
+    juvLeafNo = 16 # Bright Jean
     
     # initiation variable
     germinated=False # 0 as un-germinated, 1 as germinated
@@ -66,6 +66,7 @@ class Development:
                 if self.emergenceRate >= 1:
                     self.__class__.emerged = True
                     self.__class__.stg = 2
+                    self.__class__.leafAppeared = 1
                     break
         elif self.tassellinitiated == False:
             #daycount = 0

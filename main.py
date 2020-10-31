@@ -9,13 +9,14 @@ from Development import Development
 import csv
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+import observed as obs
 
 
 
 
 date0str = input("請輸入播種日期(yyyy-mm-dd):")
 startDate = datetime.strptime(date0str,"%Y-%m-%d")
-filename = 'out.csv'
+filename = 'wea2.csv'
 
 daycounter = 0
 pltdate =[]
@@ -51,13 +52,20 @@ with open(filename, newline='') as csvfile:
       pltlv.append(float(maize.leafAppeared))
       pltstage.append(stg)
       daycounter += 1
+      if daycounter > 80:
+          break
 
 lable_corn =  ["Sowing","Germination","Sowing","Flowering","Silking"]
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b/%d'))
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b%d'))
 plt.xlabel('Date')
 plt.ylabel('Leaf tip')
 
+
 #plot.legend(labels=lable_corn)
 plt.scatter(pltdate,pltlv, c=pltstage)
+plt.scatter(obs.dateleaf,obs.leaftip,marker='x')
+plt.scatter(obs.dateflowering,obs.flowering, marker='2')
+plt.scatter(obs.datesilking,obs.silking, marker='1')
+
 plt.show()
 
