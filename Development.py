@@ -21,7 +21,8 @@ class Development:
     PhyllochronsToSilk = 3
 
     juvLeafNo = 16 # Bright Jean
-    
+
+
     # initiation variable
     germinated=False # 0 as un-germinated, 1 as germinated
     emerged=False

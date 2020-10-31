@@ -13,8 +13,9 @@ import observed as obs
 
 
 
-
+maxleafs = input("輸入葉齡:")
 date0str = input("請輸入播種日期(yyyy-mm-dd):")
+
 startDate = datetime.strptime(date0str,"%Y-%m-%d")
 filename = 'wea2.csv'
 
@@ -61,7 +62,7 @@ plt.xlabel('Date')
 plt.ylabel('Leaf tip')
 
 
-#plot.legend(labels=lable_corn)
+
 plt.scatter(pltdate,pltlv, c=pltstage)
 plt.scatter(obs.dateleaf,obs.leaftip,marker='x')
 plt.scatter(obs.dateflowering,obs.flowering, marker='2')
