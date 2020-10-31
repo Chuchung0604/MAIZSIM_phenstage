@@ -12,12 +12,11 @@ import matplotlib.dates as mdates
 import observed as obs
 
 
-
-maxleafs = input("輸入葉齡:")
 date0str = input("請輸入播種日期(yyyy-mm-dd):")
 
 startDate = datetime.strptime(date0str,"%Y-%m-%d")
 filename = 'wea2.csv'
+
 
 daycounter = 0
 pltdate =[]
@@ -26,10 +25,12 @@ pltstage = []
 
 #呼叫Development 物件
 maize = Development()
+print(type(maize))
 
 
 # print("播種日期 = ", date0)
 with open(filename, newline='') as csvfile:
+
 
   wea = csv.reader(csvfile)
   next(wea) # skip title
@@ -41,7 +42,6 @@ with open(filename, newline='') as csvfile:
           continue
  
       Temp = row[4:28]
-     
       maize.update(Temp)
       stg = maize.stg
       leaftip = int(maize.leafAppeared)
@@ -55,6 +55,9 @@ with open(filename, newline='') as csvfile:
       daycounter += 1
       if daycounter > 80:
           break
+
+
+
 
 lable_corn =  ["Sowing","Germination","Sowing","Flowering","Silking"]
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b%d'))
