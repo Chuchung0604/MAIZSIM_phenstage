@@ -95,7 +95,7 @@ class Development:
             for h in range(len(dayTemp)):
                 self.__class__.phyllochronesFromTI +=  self.beta_fn(float(dayTemp[h]),self.Rmax_LTAR,self.Topt,self.Tceil)*self.dt
         
-        if self.germinated == True and self.leafAppeared < int(self.LvsInitiated):
+        if self.emerged == True and self.leafAppeared < int(self.LvsInitiated):
             # leaf tip appearance rate
             for h in range(len(dayTemp)):
                 self.__class__.leafAppeared += self.beta_fn(float(dayTemp[h]),self.Rmax_LTAR,self.Topt,self.Tceil)*self.dt

@@ -5,11 +5,11 @@ Created on Thu Oct  8 21:56:21 2020
 @author: user
 """
 from datetime import datetime
-from phenology import Development 
-import datetime as dtime
+from Development import Development 
 import csv
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+
 
 
 
@@ -52,10 +52,12 @@ with open(filename, newline='') as csvfile:
       pltstage.append(stg)
       daycounter += 1
 
-
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%m/%d'))
+lable_corn =  ["Sowing","Germination","Sowing","Flowering","Silking"]
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b/%d'))
 plt.xlabel('Date')
 plt.ylabel('Leaf tip')
-plt.scatter(pltdate,pltlv, c=pltstage)
 
-      
+#plot.legend(labels=lable_corn)
+plt.scatter(pltdate,pltlv, c=pltstage)
+plt.show()
+
