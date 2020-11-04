@@ -18,26 +18,8 @@ class Development:
     Rmax_Emergence = 0.2388 # 出土速率
     PhyllochronsToTassel = 3
     PhyllochronsToSilk = 3
-
     juvLeafNo = 16 # Bright Jean
-
-
-    # initiation variable
-    # germinated=False # 0 as un-germinated, 1 as germinated
-    # emerged=False
-    # tassellinitiated = False
-    # silking = False
-    # tasselFull = False
-    # leafAppeared = 0
-    # germinationRate = 0
-    # emergenceRate = 0
-    # LvsToInduce = 0
-    # inductions = 0
-    # phyllochronesFromTI = 0    
-    # T_ind = -99
-    # progressToTasselEmerg = 0
-    # progressToAnthesis = 0
-    
+   
     def __init__(self):
         self.stg = 0
         self.germinated = False
@@ -55,8 +37,7 @@ class Development:
         self.T_ind = -99
         self.progressToTasselEmerg = 0
         self.progressToAnthesis = 0
-        
-    
+           
     def beta_fn(self,t, Rmax, t_o, t_c):
         t_b = 0
         beta = 1
@@ -134,9 +115,7 @@ class Development:
             if self.progressToAnthesis >= self.PhyllochronsToSilk and self.silking == False:
                 self.silking = True
                 self.stg = 4
-
-         
-        
+       
          
     def get_stg(self):
         return self.stg
