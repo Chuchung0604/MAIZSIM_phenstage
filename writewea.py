@@ -1,23 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-Spyder Editor
+This is used to combine the observed and predicted weather data for runing simulation model.
 
 This is a temporary script file.
 """
+
 
 from datetime import datetime,timedelta
 from statistics import mean
 import csv
 
-future = "future/2020031100_tch.csv"
-hist = "Weather/histwea.csv"
-out = "test2.csv"
+# future = "future/2020031100_tch.csv"
+# hist = "Weather/histwea.csv"
+# out = "test2.csv"
 
-endDate = datetime.strptime("8/8/2020","%m/%d/%Y")
 
-tofile = []
-
-def writeWeather(futurewea,histwea,writewea):
+def writeWeather(endRealDate,histwea,futurewea,writewea):
+    # make end date of future 
+    endDate = datetime.strptime(endRealDate,"%m/%d/%Y")
+    tofile = []
     # read history weather
     with open(histwea, newline='') as histweather:
 
@@ -64,8 +65,16 @@ def writeWeather(futurewea,histwea,writewea):
             writer.writerow(tofile[r])
     
 
-
-writeWeather(future,hist,out)    
+with open("makeweather.csv",newline="") as csvbatch:
+    batch = csv.reader(csvbatch)
+    next(batch)
+    for row in batch:
+        # endRealDate = row[0]
+        # histwea = row[1]
+        # futurewea = row[2]
+        # writewea = row[3]
+        writeWeather(row[0],row[1],row[2],row[3] )
+        print(row[0])
 
 
 

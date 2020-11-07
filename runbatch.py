@@ -17,7 +17,7 @@ with open('batch.csv',newline='') as batchfile:
     # read each row of batch file
     for run in runs:
         weaname = run[0]
-        startdate = datetime.strptime(run[1],"%Y-%m-%d")
+        startdate = datetime.strptime(run[1],"%m/%d/%Y")
         outputname = run[2]
 
 # initialize parameter
@@ -59,7 +59,7 @@ with open('batch.csv',newline='') as batchfile:
 
 
         with open(outputname,'w',newline='') as csvwrite:
-            writer = csv.writer(csvwrite, delimiter=' ')
+            writer = csv.writer(csvwrite, delimiter=',')
             writer.writerow(['Date', 'leaftip', 'Stage'])
             for r in range(len(pltlv)):
                 writer.writerow([pltdate[r],pltlv[r],pltstage[r]])
