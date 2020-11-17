@@ -15,7 +15,7 @@ import csv
 # out = "test2.csv"
 
 
-def writeWeather(endRealDate,histwea,futurewea,writewea):
+def writeWeather(endRealDate,histwea,futurewea,stdwea,writewea):
     # make end date of future 
     endDate = datetime.strptime(endRealDate,"%m/%d/%Y")
     tofile = []
@@ -56,6 +56,26 @@ def writeWeather(endRealDate,histwea,futurewea,writewea):
             dayrow.extend(dayT)
             dayrow.append(0)
             tofile.append(dayrow)
+            lastPredictday = date
+    # read standard weather
+    with open(stdwea, newline='') as stdweather:
+        wea = csv.reader(stdweather)
+        next(wea)
+        for row in wea:
+            date = datetime.strptime(row[0],"%m/%d/%Y")
+            if date <= lastPredictday:
+                continue
+     
+            datestr = date.strftime("%Y-%m-%d")
+            dayrow = [datestr]
+            dayT = []
+            for h in range(27):
+                dayT.append(float(row[h+1]))
+            dayrow.extend(dayT)
+            dayrow.append(row[28])
+            tofile.append(dayrow)
+            
+        
         
  # write file       
     with open(writewea, 'w',newline='') as csvwrite:
@@ -72,8 +92,8 @@ with open("makeweather.csv",newline="") as csvbatch:
         # endRealDate = row[0]
         # histwea = row[1]
         # futurewea = row[2]
-        # writewea = row[3]
-        writeWeather(row[0],row[1],row[2],row[3] )
+        # writewea = row[4]
+        writeWeather(row[0],row[1],row[2],row[3],row[4] )
         print(row[0])
 
 

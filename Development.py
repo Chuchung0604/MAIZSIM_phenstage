@@ -18,7 +18,7 @@ class Development:
     Rmax_Emergence = 0.2388 # 出土速率
     PhyllochronsToTassel = 3
     PhyllochronsToSilk = 3
-    juvLeafNo = 16 # Bright Jean
+    juvLeafNo = 19 # 硬質玉米 19
    
     def __init__(self):
         self.stg = 0
