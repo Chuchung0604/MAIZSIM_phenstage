@@ -6,7 +6,7 @@ Created on Wed Jan 19 17:09:33 2022
 """
 import math
 import csv
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 # This submodel was written to simulate hourly temperature from daily value. It was designed to
 # connect with process based crop model. The following scripts were rewritten from 2DSOIL model,
 # simulators for elements of energy movement within soil profile, I had it from Dr. Timlin. 
@@ -187,10 +187,10 @@ class TemperatureHr:
         D22 = (self.Tmax - self.Tmin) / 2
         D23 = math.pi/TMAXHR
         D24 = 1.5*math.pi
-        TDUSK = (D22 * 1.0 + math.sin(D23*DAYLNG + D24)) + self.Tmin
+        TDUSK = (D22 * (1.0 + math.sin(D23*DAYLNG + D24))) + self.Tmin
         print("TDUSK = %f" %TDUSK)
         # some parts of temperature equation
-        XTEMP = 5.0
+        XTEMP = 2.0
         if self.Tmin < TDUSKY:
             D25 = TDUSKY - self.Tmin + XTEMP
             D26 = math.log(D25/XTEMP) / (2 * DAWN)
@@ -210,7 +210,7 @@ class TemperatureHr:
                 self.TempH[h] = T01
             elif TIMH < DAWN: # 清晨
                 if self.Tmin < TDUSKY:
-                    T01 = self.Tmin - XTEMP + (D25/math.exp(D26*(DAWN + TIMH)))
+                    T01 = self.Tmin - XTEMP + D25/math.exp(D26*(DAWN + TIMH))
                     self.TempH[h] = T01
                 else:
                     T01 = TDUSKY + D27*(DAWN+TIMH)
