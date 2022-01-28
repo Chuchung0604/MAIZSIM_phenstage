@@ -177,15 +177,18 @@ class TemperatureHr:
         DUSK = 12 + DAYLNG/2
         TDUSKY = (self.Tmax_yest + self.Tmin_yest)/2
         # calculate time after doawn in hours when maximum temp is reached
-        D20 = 0.0945 - (self.WATACT- 8.06E-5 ) + (self.Tmax * 6.77E-4)
+        D20 = 0.0945 - (self.WATACT* 8.06E-05 ) + (self.Tmax * 6.77E-04)
         D21 = self.Tmax/D20/self.WATACT
+        print("D21=%f" %D21)
         D21 = min(D21,1)
         TMAXHR = DAYLNG/math.pi * (math.pi - math.asin(D21))
+        #print("TMAXHR = %f" %TMAXHR)
         # calculate air temp at dusk TDUSK
         D22 = (self.Tmax - self.Tmin) / 2
         D23 = math.pi/TMAXHR
         D24 = 1.5*math.pi
         TDUSK = (D22 * 1.0 + math.sin(D23*DAYLNG + D24)) + self.Tmin
+        print("TDUSK = %f" %TDUSK)
         # some parts of temperature equation
         XTEMP = 5.0
         if self.Tmin < TDUSKY:
@@ -232,6 +235,7 @@ class TemperatureHr:
 # h - hour value (0-24)
 # TDUSKY - temperature at dusk in yesterday
 # TDUSK - temperature at dusk
+# TMAXHR - time between TMAX and DAWN (h)
         
 
 if __name__ == "__main__" : 
@@ -258,7 +262,7 @@ if __name__ == "__main__" :
     # print(test)
     
     #------- have temperature and radiation as input
-    JDAY = 3
+    JDAY = 260
     latitude = 24.01
     # input
     solRad = 6.15 #(MJ/m2)
