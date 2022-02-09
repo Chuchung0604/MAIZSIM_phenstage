@@ -80,7 +80,6 @@ class ReadWea:
         Tmax = tmax_lst[posit]
         Tmin_tom = tmin_lst[posit+1]
         Tmax_tom = tmax_lst[posit+1]
-        
         tempList = [[Tmin_yest,Tmax_yest], [Tmin,Tmax], [Tmin_tom,Tmax_tom]]
         
         return tempList # end of the function
@@ -89,7 +88,9 @@ class ReadWea:
 #--------- (inciden radiation submodel) ----------
 
 class Radiation:    
-    SDERP = [0.3964, 3.631, 0.03838, 0.07659, 0.0, -22.97,-0.3885, -0.1587, -0.01021]
+    SDERP = {1:0.3964, 2:3.631, 3:0.03838, 4:0.07659, 5: 0.0,
+             6:-22.97, 7:-0.3885, 8:-0.1587, 9:-0.01021}
+    
     def __init__(self,lat):
         self.DAYLNG = 0  # day length
         self.DEC = 0.3964 # solar declination
@@ -104,10 +105,11 @@ class Radiation:
 
     def solarDeclination(self,JDAY):
         # Roberson and Ruselo (1968)
-        self.DEC = self.SDERP[0]
-        for i in range(1,5):
+        self.DEC = self.SDERP[1]
+        for i in range(2,6):
+            N = i - 1
             j = i + 4
-            D11 = i*0.01721*JDAY            
+            D11 = N*0.01721*JDAY            
             self.DEC += self.SDERP[i]*math.sin(D11) + self.SDERP[j]*math.cos(D11)
         self.DEC = self.DEC * DEGRAD
                         
@@ -154,6 +156,7 @@ class TemperatureHr:
         self.Tmin = 20
         self.Tmax_tom = 24
         self.Tmin_tom = 20
+        self.TDUSKY = 0
         self.WATACT = 200 # W/m2
         self.TempH = {1:10, 2:10, 3:10, 4:10, 5:10, 6:10, 7:10, 8:10, 9:10, 10:10,
                       11:10, 12:10, 13:10, 14:10, 15:10, 16:10, 17:10, 18:10, 19:10,
@@ -172,30 +175,33 @@ class TemperatureHr:
         self.convertHourly(daylength) # end of the method
         
     def convertHourly(self,daylength):
+        
         DAYLNG = daylength
         DAWN = 12 - (DAYLNG/2)
         DUSK = 12 + DAYLNG/2
-        TDUSKY = (self.Tmax_yest + self.Tmin_yest)/2
+        if self.TDUSKY == 0:
+            self.TDUSKY = (self.Tmax + self.Tmin)/2
+
         # calculate time after doawn in hours when maximum temp is reached
-        D20 = 0.0945 - (self.WATACT* 8.06E-05 ) + (self.Tmax * 6.77E-04)
+        D20 = 0.0945 - (self.WATACT* 8.06E-05 * 2.0/math.pi)  + (self.Tmax * 6.77E-04)
         D21 = self.Tmax/D20/self.WATACT
-        print("D21=%f" %D21)
+        #print("D21=%f" %D21)
         D21 = min(D21,1)
         TMAXHR = DAYLNG/math.pi * (math.pi - math.asin(D21))
-        #print("TMAXHR = %f" %TMAXHR)
+
         # calculate air temp at dusk TDUSK
         D22 = (self.Tmax - self.Tmin) / 2
         D23 = math.pi/TMAXHR
         D24 = 1.5*math.pi
-        TDUSK = (D22 * (1.0 + math.sin(D23*DAYLNG + D24))) + self.Tmin
-        print("TDUSK = %f" %TDUSK)
+        TDUSK = (D22 * (1.0 + math.sin((D23*DAYLNG + D24)))) + self.Tmin
+        
         # some parts of temperature equation
         XTEMP = 2.0
-        if self.Tmin < TDUSKY:
-            D25 = TDUSKY - self.Tmin + XTEMP
+        if self.Tmin < self.TDUSKY:
+            D25 = self.TDUSKY - self.Tmin + XTEMP
             D26 = math.log(D25/XTEMP) / (2 * DAWN)
         else:
-            D27 = (self.Tmin - TDUSKY)/ (2 * DAWN)
+            D27 = (self.Tmin - self.TDUSKY)/ (2 * DAWN)
             
         if self.Tmin_tom < TDUSK:
             D28 = TDUSK - self.Tmin_tom + XTEMP
@@ -209,11 +215,11 @@ class TemperatureHr:
                 T01 = self.Tmin + D22 * (1 + math.sin(D23*(TIMH-DAWN)+D24))
                 self.TempH[h] = T01
             elif TIMH < DAWN: # 清晨
-                if self.Tmin < TDUSKY:
+                if self.Tmin < self.TDUSKY:
                     T01 = self.Tmin - XTEMP + D25/math.exp(D26*(DAWN + TIMH))
                     self.TempH[h] = T01
                 else:
-                    T01 = TDUSKY + D27*(DAWN+TIMH)
+                    T01 = self.TDUSKY + D27*(DAWN+TIMH)
                     self.TempH[h] = T01
             elif TIMH > DUSK: # 晚上
                 if self.Tmin_tom < TDUSK:
@@ -222,6 +228,7 @@ class TemperatureHr:
                 else:
                     T01 = TDUSK + D30*(TIMH - DUSK)
                     self.TempH[h] = T01
+        self.TDUSKY = TDUSK
         # end of the method
 
     
