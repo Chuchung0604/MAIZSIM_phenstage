@@ -171,6 +171,9 @@ class TemperatureHr:
         self.Tmax = tempList[1][1]
         self.Tmin_tom = tempList[2][0]
         self.Tmax_tom = tempList[1][1]
+        # The TCCIP data calcuate the W value of whole day (24h) but the GLYCIM
+        # model calculates the value in day time
+        solRad = solRad * 24 / daylength
         self.WATACT = solRad
         self.convertHourly(daylength) # end of the method
         
@@ -210,7 +213,7 @@ class TemperatureHr:
             D30 = (self.Tmin_tom - TDUSK) / (2 * DAWN)
         # calculate air temperature at each time
         for h in range(1,25):
-            TIMH = h - 0.5
+            TIMH = h - 0
             if TIMH >= DAWN and TIMH <= DUSK: # 白天
                 T01 = self.Tmin + D22 * (1 + math.sin(D23*(TIMH-DAWN)+D24))
                 self.TempH[h] = T01
@@ -232,6 +235,70 @@ class TemperatureHr:
         # end of the method
 
     
+class TemperatureHr3:
+    # Cesaraccio et al. (2001) An improved model for determining degree-day
+    # values from daily temperature data. Int. J. Biometerol. 45:161-169.
+    def __init__(self):
+        self.Tmax_yest = 24
+        self.Tmin_yest = 20
+        self.Tmax = 24
+        self.Tmin = 20
+        self.Tmax_tom = 24
+        self.Tmin_tom = 20
+        self.TDUSKY = 0
+        self.WATACT = 200 # W/m2
+        self.TempH = {1:10, 2:10, 3:10, 4:10, 5:10, 6:10, 7:10, 8:10, 9:10, 10:10,
+                      11:10, 12:10, 13:10, 14:10, 15:10, 16:10, 17:10, 18:10, 19:10,
+                      20:10, 21:10, 22:10, 23:10, 24:10} # list content hourly value
+    
+    def Hourly(self,day_leng,tempList):
+
+        daylength = day_leng
+        self.Tmin_yest = tempList[0][0]
+        self.Tmax_yest = tempList[0][1]
+        self.Tmin = tempList[1][0]
+        self.Tmax = tempList[1][1]
+        self.Tmin_tom = tempList[2][0]
+        self.Tmax_tom = tempList[1][1]
+        #self.WATACT = solRad
+        self.convertHourly(daylength) # end of the method
+        
+    def convertHourly(self,daylength):
+                
+        DAYLNG = daylength
+        Hn = 12 - (DAYLNG/2) # sunrise hour
+        Ho = 12 + DAYLNG/2 # sunset hour
+        Hx = Ho - 4 # time of maximum temperature
+        Hp = Hn + 24 # sunrise hour tomorrow
+        
+        # calculate air temperature at dust (To)
+        # the 0.39 value was the empirical factor in the original paper
+        To = self.Tmax - 0.39*(self.Tmax - self.Tmin_tom) # sunset temperature
+        ToY = self.Tmax_yest - 0.39*(self.Tmax_yest - self.Tmin) # sunset temperature yesterday
+
+        # calculate variable for three segment temperature
+        D01 = self.Tmax - self.Tmin # alpha for 1st segment [eq 8]
+        D02 = self.Tmax - To          # R for 2nd segment  [eq 9]
+        D03 = (self.Tmin_tom - To)/math.sqrt(Hp - Ho) # b for 3rd segment [eq. 10]
+
+        
+        for h in range(1,25):
+            if h < Hn: # 清晨之前 用前一天的溫度算
+                D00 = (self.Tmin - ToY)/math.sqrt(Hp - Ho)
+                T01 = ToY + D00 * math.sqrt(h+24-Ho)
+                self.TempH[h] = T01
+            elif h > Hn and h <= Hx: # 清晨到最高溫
+                S01 = (h - Hn)/(Hx - Hn)
+                T01 = self.Tmin + D01 * math.sin(S01 *math.pi/2)
+                self.TempH[h] = T01
+            elif h > Hx and h < Hp:# 最高溫到日落
+                S01 = (h - Hx)/4
+                T01 = To + D02 * math.sin(math.pi/2 + S01*math.pi/2)
+                self.TempH[h] = T01
+            elif h >= Hp and h < Ho: # 日落到明天日昇
+                T01 = To + D03 * math.sqrt(h-Ho)
+                self.TempH[h] = T01
+        # end of the method
             
 # DEC - solar declination (太陽赤緯)
 # DAYLNG - day length (h)
@@ -285,6 +352,12 @@ if __name__ == "__main__" :
     HourCalculator.Hourly(dayLength,templst,WAT)
     test = HourCalculator.TempH
     
+    # calculate hourly temperature from 3 segment
+    hourCalculator3 = TemperatureHr3()
+    hourCalculator3.Hourly(dayLength, templst)
+    test3 = hourCalculator3.TempH
+    
+    
     tempH_obs = [18.6,18.5,18.5,18.6,18.6,18.5,
                  18.4,18.7,19.4,19.9,20.2,20.7,
                  22.1,22.6,22.6,23.4,23.1,22.3,
@@ -294,10 +367,13 @@ if __name__ == "__main__" :
     # --------- make plot
     Hour = []
     tempH_lst = []
+    tempH3_lst = []
     for h in range(1,25):
         Hour.append(h)
-        tempH_lst.append(test[h])    
+        tempH_lst.append(test[h])
+        tempH3_lst.append(test3[h])
     
     plt.plot(Hour,tempH_lst,label='simulated')
+    plt.plot(Hour,tempH3_lst,label='3 segment')
     plt.plot(Hour,tempH_obs,label='observed',color ="#C0C0C0" )
     plt.show()
