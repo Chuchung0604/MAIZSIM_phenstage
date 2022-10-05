@@ -15,7 +15,7 @@ import observed as obs
 date0str = input("請輸入播種日期(yyyy-mm-dd):")
 
 startDate = datetime.strptime(date0str,"%Y-%m-%d")
-filename = 'wea2.csv'
+filename = 'Weather/wea20200308.csv'
 
 
 daycounter = 0
@@ -36,8 +36,9 @@ with open(filename, newline='') as csvfile:
   next(wea) # skip title
 
   for row in wea:
-
       date = datetime.strptime(row[0],"%Y-%m-%d")
+      datestr = date.strftime("%m/%d/%Y")
+#      date = datetime.strptime(row[0],"%Y-%m-%d")
       if date < startDate:
           continue
  
@@ -45,18 +46,17 @@ with open(filename, newline='') as csvfile:
       maize.update(Temp)
       stg = maize.stg
       leaftip = int(maize.leafAppeared)
+      cumTemp = round(float(maize.Tsum))
      
-      print(date, maize.stage[stg],"葉尖數=",leaftip)
+      print(datestr, maize.stage[stg],"葉片數=",leaftip,"Tsum=",cumTemp)
       
       # making plot
       pltdate.append(date)
       pltlv.append(float(maize.leafAppeared))
       pltstage.append(stg)
       daycounter += 1
-      if daycounter > 80:
+      if maize.stg == 7:
           break
-
-
 
 
 lable_corn =  ["Sowing","Germination","Sowing","Flowering","Silking"]
@@ -67,9 +67,9 @@ plt.ylabel('Leaf tip')
 
 
 plt.scatter(pltdate,pltlv, c=pltstage)
-plt.scatter(obs.dateleaf,obs.leaftip,marker='x')
-plt.scatter(obs.dateflowering,obs.flowering, marker='2')
-plt.scatter(obs.datesilking,obs.silking, marker='1')
+# plt.scatter(obs.dateleaf,obs.leaftip,marker='x')
+# plt.scatter(obs.dateflowering,obs.flowering, marker='D')
+# plt.scatter(obs.datesilking,obs.silking, marker='s')
 
 plt.show()
 
