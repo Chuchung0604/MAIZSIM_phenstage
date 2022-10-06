@@ -47,6 +47,9 @@ with open(filename, newline='') as csvfile:
       stg = maize.stg
       leaftip = int(maize.leafAppeared)
       cumTemp = round(float(maize.Tsum))
+      
+      if maize.stg == 7:
+          break
      
       print(datestr, maize.stage[stg],"葉片數=",leaftip,"Tsum=",cumTemp)
       
@@ -55,8 +58,7 @@ with open(filename, newline='') as csvfile:
       pltlv.append(float(maize.leafAppeared))
       pltstage.append(stg)
       daycounter += 1
-      if maize.stg == 7:
-          break
+
 
 
 lable_corn =  ["Sowing","Germination","Sowing","Flowering","Silking"]
